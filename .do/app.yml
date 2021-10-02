@@ -7,7 +7,5 @@ static_sites:
     deploy_on_push: true
     repo: HurricanKai/School-Lager
   name: school-lager
-  output_dir: ./bin/publish
-  routes:
-  - path: /
+  output_dir: /app/publish
   catchall_document: index.html
