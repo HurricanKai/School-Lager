@@ -1,0 +1,11 @@
+name: lager-wasm
+static_sites:
+- name: site
+  github:
+    repo: HurricanKai/School-Lager
+    branch: main
+    deploy_on_push: true
+  dockerfile_path: /Lager/build.Dockerfile
+  output_dir: /app/publish/wwwroot
+  index_document: index.html
+  catchall_document: index.html
