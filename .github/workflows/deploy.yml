@@ -3,6 +3,7 @@ on: push
 
 jobs:
   build:
+    environment: Pages
     runs-on: ubuntu-latest
     steps:
         # Checkout the code
