@@ -1,0 +1,31 @@
+﻿<div class="form-group">
+    @if (Label is not null)
+    {
+        <label for="@Id" class="@(Required ? "required" : "")">@Label</label> 
+    }
+    <input type="@Type" class="form-control" id="@Id" placeholder="@Placeholder" required=@Required value="@Value" readonly=@Readonly>
+</div>
+
+@code
+{
+    [Parameter]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+    
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter]
+    public string Type { get; set; } = "text";
+
+    [Parameter]
+    public string Placeholder { get; set; } = "";
+    
+    [Parameter]
+    public bool Required { get; set; }
+    
+    [Parameter]
+    public bool Readonly { get; set; }
+    
+    [Parameter]
+    public string? Value { get; set; }
+}

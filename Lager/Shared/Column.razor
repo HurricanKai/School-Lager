@@ -1,0 +1,32 @@
+﻿<div class="@ColClass @Class">@ChildContent</div>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    
+    [Parameter]
+    public string Class { get; set; } = String.Empty;
+    
+    [Parameter]
+    public int Base { get; set; }
+    
+    [Parameter]
+    public int Small { get; set; }
+    
+    [Parameter]
+    public int Medium { get; set; }
+    
+    [Parameter]
+    public int Large { get; set; }
+    
+    [Parameter]
+    public int ExtraLarge { get; set; }
+    
+    public string ColClass => 
+        (Base > 0 ? "col-" + Base : "") +
+        (Small > 0 ? " col-sm-" + Small : "") +
+        (Medium > 0 ? " col-md-" + Medium : "") +
+        (Large > 0 ? " col-lg-" + Large : "") +
+        (ExtraLarge > 0 ? " col-xl-" + ExtraLarge : "");
+    
+}

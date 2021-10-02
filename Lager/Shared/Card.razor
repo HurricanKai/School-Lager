@@ -1,0 +1,16 @@
+﻿<div class="card">
+    @if (Title is not null)
+    {
+        <h2 class="card-title">@Title</h2>
+    }
+    
+    @ChildContent
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    
+    [Parameter]
+    public string? Title { get; set; }
+}
