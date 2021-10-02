@@ -1,11 +1,13 @@
 name: lager-wasm
+region: fra
 static_sites:
-- name: site
+- dockerfile_path: Lager/build.Dockerfile
   github:
-    repo: HurricanKai/School-Lager
     branch: main
     deploy_on_push: true
-  dockerfile_path: /Lager/build.Dockerfile
-  output_dir: /app/publish/wwwroot
-  index_document: index.html
+    repo: HurricanKai/School-Lager
+  name: school-lager
+  output_dir: ./bin/publish
+  routes:
+  - path: /
   catchall_document: index.html
