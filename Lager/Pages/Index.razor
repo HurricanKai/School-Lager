@@ -1,83 +1,17 @@
 ﻿@page "/"
-@inject LocalForage _localForage
-@using System.Diagnostics
-@implements IDisposable
 
-
-<p>Number of Articles in DB: @_articleCount</p>
-<p>Number of Transactions in DB: @_transactionCount</p>
-<button class="btn" @onclick="(async () => {await _forageArticleDb.Clear();})">Clear Articles</button>
-<button class="btn" @onclick="(async () => {await _forageTransactionDB.Clear();})">Clear Transactions</button>
-<button class="btn" @onclick="AddItem"></button>
 <Row>
-    <Pagination Items="_articles" ElementsPerPage="15">
-        <ItemTemplate Context="article">
-            <ArticleView @key="article" Article="article"/>
-        </ItemTemplate>
-    </Pagination>
+    <Column Base="12">
+        <h1 class="align-content-center">Legende</h1>
+    </Column>
 </Row>
-
-@code
-{
-    private LocalForageStore _forageArticleDb;
-    private LocalForageStore _forageTransactionDB;
+<Row>
+    <Column Base="3"><a href="/search" class="btn btn-block btn-primary">Suche</a></Column>
+    <Column Base="1"/>
+    <Column Base="4"><a href="/articlelist" class="btn btn-block btn-primary">Stammdaten</a></Column>
+    <Column Base="1"/>
+    <Column Base="3"><a href="/search" class="btn btn-block btn-primary">Suche</a></Column>
+</Row>
+@code {
     
-    private ArticleDTO?[] _articles;
-    private int _articleCount;
-    private int _transactionCount;
-
-    private async Task AddItem()
-    {
-        for (int i = 0; i < 100; i++)
-            await _forageArticleDb.SetItem(Guid.NewGuid().ToString(), new ArticleDTO("A", Random.Shared.NextInt64().ToString(), "A", 1, 1, 1, 1, new ArticleOwnerDTO("A", "B"), "", null));
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        _articles = new []
-        {
-            new ArticleDTO("Beispiel 1", "1239139579137591375", "Peter",
-                (decimal)12.50, 3, 2, 4, new ArticleOwnerDTO("Hans Thomas", "h.thomas@mail.gws-loerrach.de"),
-                "", @"iVBORw0KGgoAAAANSUhEUgAAAJYAAACWBAMAAADOL2zRAAAAG1BMVEXMzMyWlpaqqqq3t7fFxcW+
-        vr6xsbGjo6OcnJyLKnDGAAAACXBIWXMAAA7EAAAOxAGVKw4bAAABAElEQVRoge3SMW+DMBiE4Ysx
-            JqMJtHOTITPeOsLQnaodGImEUMZEkZhRUqn92f0MaTubtfeMh/QGHANEREREREREREREtIJJ0xbH
-            299kp8l8FaGtLdTQ19HjofxZlJ0m1+eBKZcikd9PWtXC5DoDotRO04B9YOvFIXmXLy2jEbiqE6Df
-            7DTleA5socLqvEFVxtJyrpZFWz/pHM2CVte0lS8g2eDe6prOyqPglhzROL+Xye4tmT4WvRcQ2/m8
-            1p+/rdguOi8Hc5L/8Qk4vhZzy08DduGt9eVQyP2qoTM1zi0/uf4hvBWf5c77e69Gf798y08L7j0R
-            ERERERERERH9P99ZpSVRivB/rgAAAABJRU5ErkJggg=="),
-            new ArticleDTO("Beispiel 2", "7867891387613856183236", "Mark",
-                (decimal)1004.50, 1, 8, 3, new ArticleOwnerDTO("Peter Thomas", "p.thomas@mail.gws-loerrach.de"),
-                "hkaHkhkhkHk#", @"iVBORw0KGgoAAAANSUhEUgAAAJYAAACWBAMAAADOL2zRAAAAG1BMVEXMzMyWlpaqqqq3t7fFxcW+
-        vr6xsbGjo6OcnJyLKnDGAAAACXBIWXMAAA7EAAAOxAGVKw4bAAABAElEQVRoge3SMW+DMBiE4Ysx
-            JqMJtHOTITPeOsLQnaodGImEUMZEkZhRUqn92f0MaTubtfeMh/QGHANEREREREREREREtIJJ0xbH
-            299kp8l8FaGtLdTQ19HjofxZlJ0m1+eBKZcikd9PWtXC5DoDotRO04B9YOvFIXmXLy2jEbiqE6Df
-            7DTleA5socLqvEFVxtJyrpZFWz/pHM2CVte0lS8g2eDe6prOyqPglhzROL+Xye4tmT4WvRcQ2/m8
-            1p+/rdguOi8Hc5L/8Qk4vhZzy08DduGt9eVQyP2qoTM1zi0/uf4hvBWf5c77e69Gf798y08L7j0R
-            ERERERERERH9P99ZpSVRivB/rgAAAABJRU5ErkJggg=="),
-        };
-        
-        
-        _forageArticleDb = await _localForage.CreateStore("Articles", "Stores all articles available in the Lager Application");
-        _forageTransactionDB = await _localForage.CreateStore("Transactions", "Stores all transactions available in the Lager Application");
-
-        _articleCount = await _forageArticleDb.Length();
-        _transactionCount = await _forageTransactionDB.Length();
-
-        _articles = new ArticleDTO?[_articleCount];
-        StateHasChanged();
-
-        var keys = await _forageArticleDb.Keys();
-        Debug.Assert(keys.Length == _articleCount);
-        for (int i = 0; i < keys.Length; i++)
-        {
-            _articles[i] = await _forageArticleDb.GetItem<ArticleDTO>(keys[i]);
-            StateHasChanged();
-        }
-    }
-    
-    public void Dispose()
-    {
-        _forageArticleDb.Dispose();
-        _forageTransactionDB.Dispose();
-    }
 }

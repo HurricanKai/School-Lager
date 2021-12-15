@@ -1,0 +1,73 @@
+﻿@page "/articleList/"
+@inject LocalForage _localForage
+
+
+<p>Number of Articles in DB: @_articleCount</p>
+<p>Number of Transactions in DB: @_transactionCount</p>
+<button class="btn" @onclick="(async () => {await ForageArticleDb.Clear();})">Clear Articles</button>
+<button class="btn" @onclick="(async () => {await ForageTransactionDb.Clear();})">Clear Transactions</button>
+<button class="btn" @onclick="AddItem"></button>
+<Row>
+    @if (_articles is null)
+    {
+        <Loading Progress="0" Max="100"/>
+    }
+    else
+    {
+        <Pagination Items="_articles" ElementsPerPage="20">
+            <ItemTemplate Context="article">
+                <ArticleView @key="article.Item1" Article="@article.Item2" ArticleId="@article.Item1"/>
+            </ItemTemplate>
+        </Pagination>
+    }
+</Row>
+
+@code
+{
+    [CascadingParameter(Name = "ArticleDb")]
+    public LocalForageStore? ForageArticleDb { get; set; }
+
+    [CascadingParameter(Name = "TransactionDb")]
+    public LocalForageStore? ForageTransactionDb { get; set; }
+
+    private (string, ArticleDTO?)[]? _articles;
+    private int _articleCount;
+    private int _transactionCount;
+
+    private async Task AddItem()
+    {
+        for (int i = 0; i < 100; i++)
+            await ForageArticleDb.SetItem(Guid.NewGuid().ToString(), new ArticleDTO("A", Random.Shared.NextInt64().ToString(), "A", 1, 1, 1, 1, new ArticleOwnerDTO("A", "B"), "", null));
+        await Load();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_articles is null && ForageArticleDb is not null && ForageTransactionDb is not null)
+        {
+            await Load();
+        }
+    }
+
+    private async Task Load()
+    {
+        _articleCount = await ForageArticleDb.Length();
+        _transactionCount = await ForageTransactionDb.Length();
+
+        _articles = new (string, ArticleDTO?)[_articleCount];
+        StateHasChanged();
+
+        var keys = await ForageArticleDb.Keys();
+        if (keys.Length != _articleCount)
+        {
+            _articleCount = keys.Length;
+            _articles = new (string, ArticleDTO?)[_articleCount];
+        }
+            
+        for (int i = 0; i < keys.Length; i++)
+        {
+            _articles[i] = (keys[i], await ForageArticleDb.GetItem<ArticleDTO>(keys[i]));
+            StateHasChanged();
+        }
+    }
+}

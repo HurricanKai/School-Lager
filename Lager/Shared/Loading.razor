@@ -1,0 +1,64 @@
+﻿<div class="progress @GetHeightCss()">
+  <div class="progress-bar progress-bar-animated" role="progressbar" style="width: @((Progress / Max) * 100f)%" aria-valuenow="@Progress" aria-valuemin="0" aria-valuemax="@Max">@ChildContent</div>
+</div>
+
+@code {
+
+    [Parameter]
+    public float Progress { get; set; }
+
+    [Parameter]
+    public float Max { get; set; }
+
+    [Parameter]
+    public LoadingBarHeight Height { get; set; } = LoadingBarHeight.None;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    public string GetHeightCss()
+    {
+        return Height switch
+        {
+            LoadingBarHeight.None => "",
+            LoadingBarHeight.Auto => "h-auto",
+            LoadingBarHeight.Full => "h-full",
+            LoadingBarHeight.Half => "h-half",
+            LoadingBarHeight.H25 => "h-25",
+            LoadingBarHeight.H50 => "h-50",
+            LoadingBarHeight.H100 => "h-100",
+            LoadingBarHeight.H150 => "h-150",
+            LoadingBarHeight.H200 => "h-200",
+            LoadingBarHeight.H250 => "h-250",
+            LoadingBarHeight.H300 => "h-300",
+            LoadingBarHeight.H350 => "h-350",
+            LoadingBarHeight.H400 => "h-400",
+            LoadingBarHeight.H450 => "h-450",
+            LoadingBarHeight.H500 => "h-500",
+            LoadingBarHeight.H550 => "h-550",
+            LoadingBarHeight.H600 => "h-600",
+            _ => throw new ArgumentOutOfRangeException(nameof(Height))
+        };
+    }
+    
+    public enum LoadingBarHeight
+    {
+        None,
+        Auto,
+        Full,
+        Half,
+        H25,
+        H50,
+        H100,
+        H150,
+        H200,
+        H250,
+        H300,
+        H350,
+        H400,
+        H450,
+        H500,
+        H550,
+        H600,
+    }
+}

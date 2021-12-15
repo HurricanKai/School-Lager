@@ -14,7 +14,7 @@
                         <Input Type="text" Placeholder="Lieferant" Label="Lieferant" Required=@true Value="@Article.Provider" Readonly=@true/>
                     </Column>
                     <Column Base="12" Large="6">
-                        <Input Type="text" Placeholder="Preis" Label="Preis" Required=@true Value="@(Article.Price.ToString("C") + " EUR")" Readonly=@true/>
+                        <Input Type="text" Placeholder="Preis" Label="Preis" Required=@true Value="@(Article.Price.ToString("C").Substring(1) + " €")" Readonly=@true/>
                     </Column>
                     <Column Base="12" Large="3">
                         <Input Type="number" Placeholder="Bestand" Label="Bestand" Required=@true Value="@Article.PresentCount.ToString()" Readonly=@true/>
@@ -44,20 +44,43 @@
                         </Column>
                     }
                 </FormRow>
+                <FormRow Class="row-eq-spacing">
+                    <Column Base="12">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-secondary">Bestellt</button>
+                                <button class="btn btn-success">Zugang</button>
+                                <button class="btn btn-danger">Abgang</button>
+                            </div>
+                        </div>
+                    </Column>
+                </FormRow>
+                <FormRow Class="row-eq-spacing">
+                    <Column Base="12">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a href="@("/editArticle/" + ArticleId)" class="btn btn-primary">Aritkel Editieren</a>
+                                <a href="/" class="btn btn-primary">Zur Legende</a>
+                                <a href="/articleList" class="btn btn-primary">Zu Stammdaten</a>
+                            </div>
+                        </div>
+                    </Column>
+                </FormRow>
             </form>
         </Card>
     }
     else
     {
         <Card Title="Loading...">
-            <div class="progress">
-              <div class="progress-bar progress-bar-animated" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
+            <Loading Progress="80" Max="100"/>
         </Card>
     }
 </Column>
 
 @code {
+
+    [Parameter]
+    public string ArticleId { get; set; }
 
     [Parameter]
     public ArticleDTO? Article { get; set; }

@@ -1,0 +1,10 @@
+﻿@page "/EditArticle/{ArticleId}/"
+
+<ArticleEdit ArticleId="@ArticleId"></ArticleEdit>
+
+@code {
+
+    [Parameter]
+    public string ArticleId { get; set; }
+
+}

@@ -1,8 +1,32 @@
 ﻿@inherits LayoutComponentBase
+@inject LocalForage _localForage
+@implements IDisposable
 
 <div class="page-wrapper">
     <div class="sticky-alerts"></div>
     <div class="content-wrapper">
-        @Body
+        <CascadingValue Value="@_articlesDb" Name="ArticleDb">
+            <CascadingValue Value="@_transactionsDb" Name="TransactionDb">
+                @Body
+            </CascadingValue>
+        </CascadingValue>
     </div>
 </div>
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        _articlesDb = await _localForage.CreateStore("Articles", "Stores all articles available in the Lager Application");
+        _transactionsDb = await _localForage.CreateStore("Transactions", "Stores all transactions available in the Lager Application");
+    }
+
+    public void Dispose()
+    {
+        _articlesDb?.Dispose();
+        _transactionsDb?.Dispose();
+    }
+
+    private LocalForageStore? _articlesDb;
+    private LocalForageStore? _transactionsDb;
+}

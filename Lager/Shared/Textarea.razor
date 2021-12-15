@@ -3,7 +3,7 @@
     {
         <label for="@Id" class="@(Required ? "required" : "")">@Label</label> 
     }
-    <textarea class="form-control" id="@Id" placeholder="@Placeholder" required=@Required readonly=@Readonly>@ChildContent</textarea>
+    <textarea class="form-control" id="@Id" placeholder="@Placeholder" required="@Required" readonly="@Readonly">@ChildContent</textarea>
 </div>
 
 @code

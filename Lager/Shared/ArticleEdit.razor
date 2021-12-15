@@ -1,0 +1,127 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Globalization
+@inject NavigationManager _navigationManager
+
+<Card Title="Editiere den Artikel">
+    <EditForm Model="_model" OnValidSubmit="Submit">
+        <FormRow Class="row-eq-spacing-lg">
+            <Column Base="12" Large="6">
+                <Input Type="number" Placeholder="Artikelnummer" Label="Artikelnummer" Required="@true" @bind-Value="@_model.Number"/>
+            </Column>
+            <Column Base="12" Large="6">
+                <Input Type="text" Placeholder="Artikelbezeichnung" Label="Artikelbezeichnung" Required="@true" @bind-Value="@_model.Name"/>
+            </Column>
+            <Column Base="12" Large="6">
+                <Input Type="text" Placeholder="Lieferant" Label="Lieferant" Required="@true" @bind-Value="@_model.Provider"/>
+            </Column>
+            <Column Base="12" Large="6">
+                <Input Type="text" Placeholder="Preis" Label="Preis" Required="@true" @bind-Value="_model.Price"/>
+            </Column>
+            <Column Base="12" Large="3">
+                <Input Type="number" Placeholder="Bestand" Label="Bestand" Required="@true" @bind-Value="_model.PresentCount"/>
+            </Column>
+            <Column Base="12" Large="6">
+                <Input Type="text" Placeholder="Verantwortlicher Name" Label="Verantwortlicher Name" Required="@true" @bind-Value="@_model.OwnerName"/>
+            </Column>
+            <Column Base="12" Large="6">
+                <Input Type="text" Placeholder="Verantwortlicher E-Mail" Label="Verantwortlicher E-Mail" Required="@true" @bind-Value="@_model.OwnerEMail"/>
+            </Column>
+            <Column Base="12" Large="6">
+                <Textarea placeholder="Bemerkung">@_model.Note</Textarea>
+            </Column>
+            <Column Base="12" Large="6">
+                <div class="custom-file">
+                    <InputFile id="file-input-1" OnChange="@LoadFile"/>
+                    <label for="file-input-1">Bild ausw&auml;hlen</label>
+                </div>
+            </Column>
+        </FormRow>
+        <div class="form-row">
+            <div class="col-12">
+                <div class="btn-toolbar" role="toolbar">
+                    <div class="btn-group" role="group">
+                      <button type="submit" class="btn btn-success">Speichern</button>
+                      <a class="btn btn-danger" href="/">&Auml;nderungen verwerfen</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+</Card>
+
+@code {
+    [CascadingParameter(Name = "ArticleDb")]
+    public LocalForageStore? ForageArticleDb { get; set; }
+
+    [Parameter]
+    public string? ArticleId { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (ForageArticleDb is null) return;
+        
+        _model = new();
+        if (ArticleId is not null)
+        {
+            var dbEntry = await ForageArticleDb!.GetItem<ArticleDTO>(ArticleId);
+
+            if (dbEntry is not null)
+            {
+                _model.Name = dbEntry.Name;
+                _model.Note = dbEntry.Note;
+                _model.Number = dbEntry.Number;
+                _model.Price = dbEntry.Price.ToString(CultureInfo.InvariantCulture);
+                _model.Provider = dbEntry.Provider;
+                _model.OwnerName = dbEntry.Owner.Name;
+                _model.PresentCount = dbEntry.PresentCount.ToString();
+                _model.OwnerEMail = dbEntry.Owner.EMail;
+            }
+        }
+        StateHasChanged();
+    }
+
+    private Model _model = new();
+
+    private async Task Submit() 
+    {
+        var dto = new ArticleDTO(_model.Name, _model.Number, _model.Provider, decimal.Parse(_model.Price), int.Parse(_model.PresentCount), 0, 0, new ArticleOwnerDTO(_model.OwnerName, _model.OwnerEMail), _model.Note, _model.Base64Str);
+        if (ArticleId is null) ArticleId = Guid.NewGuid().ToString();
+        ForageArticleDb?.SetItem(ArticleId, dto);
+        _navigationManager.NavigateTo(_navigationManager.BaseUri);
+    }
+    
+    private async Task LoadFile(InputFileChangeEventArgs e)
+    {
+        await using var str = (await e.File.RequestImageFileAsync("png", 2048, 2048)).OpenReadStream();
+        await using var memStr = new MemoryStream();
+        await str.CopyToAsync(memStr);
+        _model.Base64Str = Convert.ToBase64String(memStr.ToArray());
+    }
+
+    private class Model
+    {
+        [Required]
+        public string Name { get; set; }
+
+        [Required]
+        public string Number { get; set; }
+
+        [Required]
+        public string Provider { get; set; }
+
+        [Required]
+        public string OwnerName { get; set; }
+
+        [Required]
+        public string OwnerEMail { get; set; }
+
+        [Required]
+        public string Price { get; set; }
+        
+        public string PresentCount { get; set; }
+
+        public string? Base64Str { get; set; }
+
+        public string Note { get; set; }
+    }
+}

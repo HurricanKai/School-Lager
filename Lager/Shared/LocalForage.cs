@@ -32,10 +32,11 @@ public sealed class LocalForageStore : IDisposable
         _instance = instance;
     }
 
-    public async ValueTask<T?> GetItem<T>(string key)
+    public async ValueTask<T?> GetItem<T>(string key) where T : class
     {
         await _runtime.InvokeVoidAsync("console.log", $"Getting {key} from ", _instance);
-        return JsonSerializer.Deserialize<T>(await _instance.InvokeAsync<string>("getItem", key));
+        var json = await _instance.InvokeAsync<string?>("getItem", key);
+        return json is null ? null : JsonSerializer.Deserialize<T>(json);
     }
     
     public async ValueTask SetItem<T>(string key, T value)

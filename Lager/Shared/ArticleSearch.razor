@@ -1,0 +1,119 @@
+﻿@if (_isInitialized)
+{
+    if (_isSearching)
+    {
+        <Card Title="@("Searching " + _searchMaxProgress + " Articles")">
+            <Loading Max="_searchMaxProgress" Progress="_searchCurrentProgress" Height="Loading.LoadingBarHeight.H100">@(_searchCurrentProgress)/@(_searchMaxProgress)</Loading>
+        </Card>
+    }
+    else
+    {
+        <Card Title="Suche nach einem Artikel">
+            <EditForm Model="@_model" OnSubmit="@Submit">
+                <FormRow Class="row-eq-spacing-lg">
+                    <Column Base="12" Large="6">
+                        <InputSelect TValue="SearchBy" @bind-Value="_model.SearchBy" class="form-control form-control-lg">
+                            <option value="@SearchBy.Name">Artikelname</option>
+                            <option value="@SearchBy.Number">Artikelnummer</option>
+                            <option value="@SearchBy.Owner">Verantworticher</option>
+                            <option value="@SearchBy.Provider">Lieferant</option>
+                        </InputSelect>
+                    </Column>
+                    <Column Base="12" Large="6">
+                        <InputText @bind-Value="_model.Input" class="form-control form-control-lg"/>
+                    </Column>
+                </FormRow>
+                <FormRow>
+                    <Column Base="12"><button type="submit" class="btn btn-primary btn-lg btn-block">Suchen</button></Column>
+                </FormRow>
+            </EditForm>
+        </Card>
+    }
+
+    if (_results.Any())
+    {
+        <Row>
+            @foreach (var result in _results)
+            {
+                <ArticleView Article="result"/>
+            }
+        </Row>
+    }
+}
+else
+{
+    <Card Title="Loading Articles...">
+        <Loading Progress="80" Max="100" Height="@Loading.LoadingBarHeight.Full"/>
+    </Card>
+}
+
+@code
+{
+    [CascadingParameter(Name = "ArticleDb")]
+    public LocalForageStore? ForageArticleDb { get; set; }
+
+    private bool _isInitialized = false;
+    private bool _isSearching = false;
+    private int _searchMaxProgress;
+    private int _searchCurrentProgress;
+
+    private List<ArticleDTO> _results = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_isInitialized == false && ForageArticleDb is not null)
+        {
+            _isInitialized = true;
+            StateHasChanged();
+        }
+    }
+
+    private async Task Submit()
+    {
+        var keys = await ForageArticleDb.Keys();
+        _searchCurrentProgress = 0;
+        _searchMaxProgress = keys.Length;
+        _isSearching = true;
+        _results.Clear();
+        StateHasChanged();
+
+        for (int i = 0; i < keys.Length; i++)
+        {
+            var key = keys[i];
+            var dto = await ForageArticleDb.GetItem<ArticleDTO>(key);
+            if (dto is null) continue;
+            
+            // evaluate model
+            if (_model.SearchBy switch
+            {
+                SearchBy.Name => dto.Name.Contains(_model.Input) || _model.Input.Contains(dto.Name),
+                SearchBy.Number => dto.Number.Contains(_model.Input) || _model.Input.Contains(dto.Number),
+                SearchBy.Provider => dto.Provider.Contains(_model.Input) || _model.Input.Contains(dto.Provider),
+                SearchBy.Owner => dto.Owner.Name.Contains(_model.Input) || _model.Input.Contains(dto.Owner.Name),
+                _ => throw new ArgumentOutOfRangeException()
+            })
+                _results.Add(dto);
+            _searchCurrentProgress = i;
+            StateHasChanged();
+        }
+
+        _isSearching = false;
+        StateHasChanged();
+    }
+
+    private Model _model = new Model();
+
+    private enum SearchBy
+    {
+        Name,
+        Number,
+        Provider,
+        Owner
+    }
+
+    private class Model
+    {
+        public SearchBy SearchBy { get; set; } = SearchBy.Name;
+        public string Input { get; set; }
+    }
+}

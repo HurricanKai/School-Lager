@@ -3,7 +3,7 @@
     {
         <label for="@Id" class="@(Required ? "required" : "")">@Label</label> 
     }
-    <input type="@Type" class="form-control" id="@Id" placeholder="@Placeholder" required=@Required value="@Value" readonly=@Readonly>
+    <input type="@Type" class="form-control" id="@Id" placeholder="@Placeholder" required="@Required" value="@Value" readonly="@Readonly" @onchange="async (e) => { Value = (string?)e.Value; await ValueChanged.InvokeAsync(Value);}">
 </div>
 
 @code
@@ -28,4 +28,7 @@
     
     [Parameter]
     public string? Value { get; set; }
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
 }
