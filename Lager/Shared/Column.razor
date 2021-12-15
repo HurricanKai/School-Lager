@@ -1,4 +1,9 @@
-﻿<div class="@ColClass @Class">@ChildContent</div>
+﻿<div class="@ColClass @Class">
+    @if (ChildContent is not null)
+    {
+        @(ChildContent)
+    }
+</div>
 
 @code {
     [Parameter]

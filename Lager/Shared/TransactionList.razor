@@ -2,7 +2,9 @@
 {
     foreach(var (id, transaction) in _transactions)
     {
-        <TransactionView TransactionId="@id" Transaction="@transaction" key="@id" />
+        <div accesskey="@id">
+            <TransactionView TransactionId="@id" Transaction="@transaction" Article="@Article"/>
+        </div>
     }
     @if (_transactions.Count == 0)
     {
@@ -17,6 +19,9 @@ else
 @code {
     [Parameter]
     public string ArticleId { get; set; }
+    
+    [Parameter]
+    public ArticleDTO Article { get; set; }
 
     [CascadingParameter(Name = "TransactionDb")]
     public LocalForageStore? ForageTransactionDb { get; set; }
@@ -32,16 +37,19 @@ else
 
     private async Task Load()
     {
-        var keys = await ForageTransactionDb.Keys();
+        var keys = (await ForageTransactionDb.Keys());
         _transactions = new List<(string, TransactionDTO)>();
 
         for (int i = 0; i < keys.Length; i++)
         {
-            var transaction = await ForageTransactionDb.GetItem<TransactionDTO>(keys[i]);
-            if (transaction.ArticleId == ArticleId)
+            if (!_transactions.Any(x => x.Item1 == keys[i]))
             {
-                _transactions.Add((keys[i], transaction));
-                StateHasChanged();
+                var transaction = await ForageTransactionDb.GetItem<TransactionDTO>(keys[i]);
+                if (transaction.ArticleId == ArticleId)
+                {
+                    _transactions.Add((keys[i], transaction));
+                    StateHasChanged();
+                }
             }
         }
     }

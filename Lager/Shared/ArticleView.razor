@@ -14,7 +14,7 @@
                         <Input Type="text" Placeholder="Lieferant" Label="Lieferant" Required=@true Value="@Article.Provider" Readonly=@true/>
                     </Column>
                     <Column Base="12" Large="6">
-                        <Input Type="text" Placeholder="Preis" Label="Preis" Required=@true Value="@(Article.Price.ToString("C").Substring(1) + " €")" Readonly=@true/>
+                        <Input Type="text" Placeholder="Preis" Label="Preis" Required=@true Value="@(Article.Price.ToString("C", System.Globalization.CultureInfo.InvariantCulture).Substring(1) + " €")" Readonly=@true/>
                     </Column>
                     <Column Base="12" Large="3">
                         <Input Type="number" Placeholder="Bestand" Label="Bestand" Required=@true Value="@Article.PresentCount.ToString()" Readonly=@true/>
@@ -35,7 +35,7 @@
                         <Input Type="text" Placeholder="Verantwortlicher E-Mail" Label="Verantwortlicher E-Mail" Required=@true Value="@Article.Owner.EMail" Readonly=@true/>
                     </Column>
                     <Column Base="12" Large="6">
-                        <Textarea class="form-control" placeholder="Bemerkung" Readonly=@true>@Article.Note</Textarea>
+                        <Textarea placeholder="Bemerkung" Readonly=@true>@Article.Note</Textarea>
                     </Column>
                     @if (Article.Base64ImageData is not null)
                     {
@@ -72,7 +72,7 @@
                     Transaktionen
                 </summary>
                 <div class="collapse-content">
-                    <TransactionList ArticleId="@ArticleId"/>
+                    <TransactionList ArticleId="@ArticleId" Article="@Article"/>
                 </div>
             </details>
         </Card>

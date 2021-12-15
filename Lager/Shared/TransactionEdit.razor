@@ -12,21 +12,24 @@
                 </div>
             </Column>
             <Column Base="12" Large="6">
-                <label for="multi-select-1">Select one or more colors</label>
-                <InputSelect class="form-control" id="multi-select-1" multiple="multiple" size="3" @bind-Value="_model.Type">
-                    <option value="@TransactionType.Addition">Zugang</option>
-                    <option value="@TransactionType.Removal">Abgang</option>
-                    <option value="@TransactionType.Buying">Bestellung</option>
+                <label for="select1">Transaktionstyp</label>
+                <InputSelect class="form-control" id="select1" @bind-Value="_model.Type">
+                    <option Value="@TransactionType.Addition">Zugang</option>
+                    <option Value="@TransactionType.Removal">Abgang</option>
+                    <option Value="@TransactionType.Buying">Bestellung</option>
                 </InputSelect>
             </Column>
             <Column Base="12" Large="6">
                 <Input Type="number" Placeholder="Anzahl" Label="Anzahl" Required="@true" @bind-Value="@_model.Count"/>
             </Column>
             <Column Base="12" Large="6">
-                <InputTextArea class="form-control" placeholder="Bemerkung" @bind-Value="_model.Note"/>
+                <div class="form-group">
+                    <label for="@_idd">Bemerkung</label>
+                    <InputTextArea class="form-control" placeholder="Bemerkung" @bind-Value="_model.Note" id="@_idd"/>
+                </div>
             </Column>
             <Column Base="12" Large="6">
-                <button type="submit" class="btn btn-primary">Speicher</button>
+                <button type="submit" class="btn btn-primary">Speichern</button>
             </Column>
         </FormRow>
     </EditForm>
@@ -34,6 +37,8 @@
 
 @code {
     private Model _model = new();
+
+    private string _idd = Guid.NewGuid().ToString();
     
     [CascadingParameter(Name = "TransactionDb")]
     public LocalForageStore? ForageTransactionDb { get; set; }

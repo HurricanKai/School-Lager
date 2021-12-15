@@ -1,23 +1,42 @@
 <Content>
-    <p>
-        @(Transaction.Count)x @Article.Name
+    <Row>
+        <Column Base="2">
+            @(Transaction.Count)x
+        </Column>
+        <Column Base="2">
+            @Article.Name
+        </Column>
         @if (Transaction.Type == TransactionType.Addition)
         {
-            <span class="badge badge-success">Zugang</span>
+            <Column Base="2">
+                <span class="badge badge-success">Zugang</span>
+            </Column>
         }
         @if (Transaction.Type == TransactionType.Removal)
         {
-            <span class="badge badge-danger">Abgang</span>
+            <Column Base="2">
+                <span class="badge badge-danger">Abgang</span>
+            </Column>
         }
         @if (Transaction.Type == TransactionType.Buying)
         {
-            <span class="badge badge-warning">Bestellung</span>
+            <Column Base="2">
+                <span class="badge badge-warning">Bestellung</span>
+            </Column>
         }
-        @if (!string.IsNullOrWhiteSpace(Transaction.Note))
+        <Column Base="3">
+            @if (!string.IsNullOrWhiteSpace(Transaction.Note))
+            {
+                    <span> (@Transaction.Note)</span>
+            }
+        </Column>
+        @if (Transaction.Type == TransactionType.Buying)
         {
-            <span>(@Transaction.Note)</span>
+            <Column Base="3">
+                <button class="btn btn-block btn-primary" @onclick="@Angekommen">Angekommen</button>
+            </Column>
         }
-    </p> 
+    </Row>
 </Content>
 
 @code {
@@ -29,4 +48,14 @@
 
     [Parameter]
     public ArticleDTO Article { get; set; }
+
+    [CascadingParameter(Name = "TransactionDb")]
+    public LocalForageStore? ForageTransactionDb { get; set; }
+
+    private async Task Angekommen()
+    {
+        Transaction = Transaction with {Type = TransactionType.Addition};
+        await ForageTransactionDb.SetItem(TransactionId, Transaction);
+        StateHasChanged();
+    }
 }

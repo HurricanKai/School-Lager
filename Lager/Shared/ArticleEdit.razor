@@ -27,7 +27,10 @@
                 <Input Type="text" Placeholder="Verantwortlicher E-Mail" Label="Verantwortlicher E-Mail" Required="@true" @bind-Value="@_model.OwnerEMail"/>
             </Column>
             <Column Base="12" Large="6">
-                <InputTextArea placeholder="Bemerkung" @bind-Value="_model.Note"/>
+                <div class="form-group">
+                    <label for="@_idd">Bemerkung</label>
+                    <InputTextArea class="form-control" placeholder="Bemerkung" @bind-Value="_model.Note" id="@_idd"/>
+                </div>
             </Column>
             <Column Base="12" Large="6">
                 <div class="custom-file">
@@ -55,6 +58,8 @@
 
     [Parameter]
     public string? ArticleId { get; set; }
+
+    private string _idd = Guid.NewGuid().ToString();
 
     protected override async Task OnParametersSetAsync()
     {
