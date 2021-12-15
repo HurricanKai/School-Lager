@@ -57,7 +57,7 @@
             var model = await ForageTransactionDb.GetItem<TransactionDTO>(TransactionId);
             if (model is not null)
             {
-                _model.Count = model.Count;
+                _model.Count = model.Count.ToString();
                 _model.Note = model.Note;
                 _model.Type = model.Type;
                 _model.ArticleId = model.ArticleId;
@@ -67,7 +67,7 @@
 
     private async Task Submit()
     {
-        var dto = new TransactionDTO(_model.Type, _model.Count, _model.ArticleId, _model.Note);
+        var dto = new TransactionDTO(_model.Type, int.Parse(_model.Count), _model.ArticleId, _model.Note);
         if (TransactionId is null) TransactionId = Guid.NewGuid().ToString();
         ForageTransactionDb?.SetItem(TransactionId, dto);
         _navigationManager.NavigateTo(_navigationManager.BaseUri);
@@ -76,7 +76,7 @@
     private sealed class Model
     {
         public TransactionType Type { get; set; }
-        public int Count { get; set; }
+        public string Count { get; set; }
         public string ArticleId { get; set; }
         public string Note { get; set; }
     }
