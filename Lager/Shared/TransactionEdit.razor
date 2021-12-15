@@ -23,7 +23,10 @@
                 <Input Type="number" Placeholder="Anzahl" Label="Anzahl" Required="@true" @bind-Value="@_model.Count"/>
             </Column>
             <Column Base="12" Large="6">
-                <InputTextArea placeholder="Bemerkung" @bind-Value="_model.Note"/>
+                <InputTextArea class="form-control" placeholder="Bemerkung" @bind-Value="_model.Note"/>
+            </Column>
+            <Column Base="12" Large="6">
+                <button type="submit" class="btn btn-primary">Speicher</button>
             </Column>
         </FormRow>
     </EditForm>

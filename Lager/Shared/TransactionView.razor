@@ -1,0 +1,32 @@
+<Content>
+    <p>
+        @(Transaction.Count)x @Article.Name
+        @if (Transaction.Type == TransactionType.Addition)
+        {
+            <span class="badge badge-success">Zugang</span>
+        }
+        @if (Transaction.Type == TransactionType.Removal)
+        {
+            <span class="badge badge-danger">Abgang</span>
+        }
+        @if (Transaction.Type == TransactionType.Buying)
+        {
+            <span class="badge badge-warning">Bestellung</span>
+        }
+        @if (!string.IsNullOrWhitespace(Transaction.Note))
+        {
+            (@Transaction.Note)
+        }
+    </p> 
+</Content>
+
+@code {
+    [Parameter]
+    public string TransactionId { get; set; }
+
+    [Parameter]
+    public TransactionDTO Transaction { get; set; }
+
+    [Parameter]
+    public ArticleDTO Article { get; set; }
+}
