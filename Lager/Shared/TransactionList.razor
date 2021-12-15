@@ -4,10 +4,14 @@
     {
         <TransactionView TransactionId="@id" Transaction="@transaction" key="@id" />
     }
+    @if (_transactions.Length == 0)
+    {
+        <p>Keine Transaktionen</p>
+    }
 }
 else
 {
-    <Loading Progress="10" Full="100"/>
+    <Loading Progress="10" Max="100"/>
 }
 
 @code {
