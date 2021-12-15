@@ -1,0 +1,11 @@
+@page "/createTransaction/{ArticleId}/{Type}"
+
+<TransactionEdit StartType="@Type" ArticleId="@ArticleId"/>
+
+@code {
+    [Parameter]
+    public string ArticleId { get; set; }
+
+    [Parameter]
+    public TransactionType Type { get; set; }
+}
