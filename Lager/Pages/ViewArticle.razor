@@ -1,0 +1,30 @@
+﻿@page "/article/{ArticleId}"
+
+@if (_article is null)
+{
+    <Loading Progress="15" Max="100"/>
+}
+else
+{
+    <ArticleView ArticleId="ArticleId" Article="_article"/>
+}
+
+@code {
+
+    [Parameter]
+    public string ArticleId { get; set; }
+    
+    [CascadingParameter(Name = "ArticleDb")]
+    public LocalForageStore? ForageArticleDb { get; set; }
+
+    private ArticleDTO? _article;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_article is null && ForageArticleDb is not null)
+        {
+            _article = await ForageArticleDb.GetItem<ArticleDTO>(ArticleId);
+        }
+    }
+
+}

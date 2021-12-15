@@ -1,0 +1,83 @@
+﻿@inject NavigationManager _navigationManager
+
+<Card Title="Transaktion Erstellen">
+    <EditForm Model="_model" OnValidSubmit="Submit">
+        <FormRow Class="row-eq-spacing-lg">
+            <Column Base="12" Large="6">
+                <div class="input-group">
+                    <Input Type="text" Readonly="true" Placeholder="Artikelname" Label="Artikelname" @Value="@Article.Name"/>
+                    <div class="input-group-append">
+                        <span class="input-group-text"><a href="@("/article/" + ArticleId)" class="btn btn-primary">Zum Artikel</a></span>
+                    </div>
+                </div>
+            </Column>
+            <Column Base="12" Large="6">
+                <label for="multi-select-1">Select one or more colors</label>
+                <InputSelect class="form-control" id="multi-select-1" multiple="multiple" size="3" @bind-Value="_model.Type">
+                    <option value="@TransactionType.Addition">Zugang</option>
+                    <option value="@TransactionType.Removal">Abgang</option>
+                    <option value="@TransactionType.Buying">Bestellung</option>
+                </InputSelect>
+            </Column>
+            <Column Base="12" Large="6">
+                <Input Type="number" Placeholder="Anzahl" Label="Anzahl" Required="@true" @bind-Value="@_model.Count"/>
+            </Column>
+            <Column Base="12" Large="6">
+                <InputTextArea placeholder="Bemerkung" @bind-Value="_model.Note"/>
+            </Column>
+        </FormRow>
+    </EditForm>
+</Card>
+
+@code {
+    private Model _model = new();
+    
+    [CascadingParameter(Name = "TransactionDb")]
+    public LocalForageStore? ForageTransactionDb { get; set; }
+
+    [Parameter]
+    public string? TransactionId { get; set; }
+
+    [Parameter]
+    public string ArticleId { get; set; }
+
+    [Parameter]
+    public ArticleDTO Article { get; set; }
+    
+    [Parameter]
+    public TransactionType StartType { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _model = new();
+        _model.ArticleId = ArticleId;
+        _model.Type = StartType;
+        if (TransactionId is not null)
+        {
+            var model = await ForageTransactionDb.GetItem<TransactionDTO>(TransactionId);
+            if (model is not null)
+            {
+                _model.Count = model.Count;
+                _model.Note = model.Note;
+                _model.Type = model.Type;
+                _model.ArticleId = model.ArticleId;
+            }
+        }
+    }
+
+    private async Task Submit()
+    {
+        var dto = new TransactionDTO(_model.Type, _model.Count, _model.ArticleId, _model.Note);
+        if (TransactionId is null) TransactionId = Guid.NewGuid().ToString();
+        ForageTransactionDb?.SetItem(TransactionId, dto);
+        _navigationManager.NavigateTo(_navigationManager.BaseUri);
+    }
+
+    private sealed class Model
+    {
+        public TransactionType Type { get; set; }
+        public int Count { get; set; }
+        public string ArticleId { get; set; }
+        public string Note { get; set; }
+    }
+}

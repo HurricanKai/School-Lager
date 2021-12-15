@@ -27,7 +27,7 @@
                 <Input Type="text" Placeholder="Verantwortlicher E-Mail" Label="Verantwortlicher E-Mail" Required="@true" @bind-Value="@_model.OwnerEMail"/>
             </Column>
             <Column Base="12" Large="6">
-                <Textarea placeholder="Bemerkung">@_model.Note</Textarea>
+                <InputTextArea placeholder="Bemerkung" @bind-Value="_model.Note"/>
             </Column>
             <Column Base="12" Large="6">
                 <div class="custom-file">
