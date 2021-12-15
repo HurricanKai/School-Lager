@@ -4,7 +4,7 @@
     {
         <TransactionView TransactionId="@id" Transaction="@transaction" key="@id" />
     }
-    @if (_transactions.Length == 0)
+    @if (_transactions.Count == 0)
     {
         <p>Keine Transaktionen</p>
     }
