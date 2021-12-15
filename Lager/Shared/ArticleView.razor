@@ -48,9 +48,9 @@
                     <Column Base="12">
                         <div class="btn-toolbar" role="toolbar">
                             <div class="btn-group" role="group">
-                                <a class="btn btn-secondary" href="@("/createTransaction/" + ArticleId + "/" + Enum.GetName(TransactionType.Buying))">Bestellt</a>
-                                <a class="btn btn-success" href="@("/createTransaction/" + ArticleId + "/" + Enum.GetName(TransactionType.Addition))">Zugang</a>
-                                <a class="btn btn-danger" href="@("/createTransaction/" + ArticleId + "/" + Enum.GetName(TransactionType.Removal))">Abgang</a>
+                                <a class="btn btn-secondary" href="@("/createTransaction/" + ArticleId + "?Type=" + Enum.GetName(TransactionType.Buying))">Bestellt</a>
+                                <a class="btn btn-success" href="@("/createTransaction/" + ArticleId + "?Type=" + Enum.GetName(TransactionType.Addition))">Zugang</a>
+                                <a class="btn btn-danger" href="@("/createTransaction/" + ArticleId + "?Type=" + Enum.GetName(TransactionType.Removal))">Abgang</a>
                             </div>
                         </div>
                     </Column>

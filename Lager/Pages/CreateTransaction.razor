@@ -1,4 +1,4 @@
-@page "/createTransaction/{ArticleId}/{TypeString}"
+@page "/createTransaction/{ArticleId}}"
 
 <TransactionEdit StartType="@(Enum.Parse<TransactionType>(TypeString))" ArticleId="@ArticleId"/>
 
@@ -7,5 +7,6 @@
     public string ArticleId { get; set; }
 
     [Parameter]
+    [SupplyParameterFromQuery(Name = "Type")]
     public string TypeString { get; set; }
 }

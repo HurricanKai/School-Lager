@@ -2,9 +2,7 @@
 {
     foreach(var (id, transaction) in _transactions)
     {
-        <div @key="@id">
-            <p>@transaction.Count</p>
-        </div>
+        <TransactionView TransactionId="@id" Transaction="@transaction" key="@id" />
     }
 }
 else
