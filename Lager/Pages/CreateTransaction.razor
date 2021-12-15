@@ -1,11 +1,11 @@
-@page "/createTransaction/{ArticleId}/{Type}"
+@page "/createTransaction/{ArticleId}/{TypeString}"
 
-<TransactionEdit StartType="@Type" ArticleId="@ArticleId"/>
+<TransactionEdit StartType="@Enum.Parse<TransactionType>(TypeString)" ArticleId="@ArticleId"/>
 
 @code {
     [Parameter]
     public string ArticleId { get; set; }
 
     [Parameter]
-    public TransactionType Type { get; set; }
+    public string TypeString { get; set; }
 }

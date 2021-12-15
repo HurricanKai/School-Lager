@@ -48,9 +48,9 @@
                     <Column Base="12">
                         <div class="btn-toolbar" role="toolbar">
                             <div class="btn-group" role="group">
-                                <button class="btn btn-secondary">Bestellt</button>
-                                <button class="btn btn-success">Zugang</button>
-                                <button class="btn btn-danger">Abgang</button>
+                                <a class="btn btn-secondary" href="@("/createTransaction/" + ArticleId + "/" + TransactionType.Buying)">Bestellt</a>
+                                <a class="btn btn-success" href="@("/createTransaction/" + ArticleId + "/" + TransactionType.Addition)">Zugang</a>
+                                <a class="btn btn-danger" href="@("/createTransaction/" + ArticleId + "/" + TransactionType.Removal)">Abgang</a>
                             </div>
                         </div>
                     </Column>
@@ -67,6 +67,13 @@
                     </Column>
                 </FormRow>
             </form>
+            <details class="collapse-panel">
+                <summary class="collapse-header">
+                </summary>
+                <div class="collapse-content">
+                    <p>Test</p>
+                </div>
+            </details>
         </Card>
     }
     else
