@@ -1,7 +1,46 @@
-
-
+@if (_transactions is not null)
+{
+    foreach(var (id, transaction) in _transactions)
+    {
+        <div @key="@id">
+            <p>@transaction.Count</p>
+        </div>
+    }
+}
+else
+{
+    <Loading Progress="10" Full="100"/>
+}
 
 @code {
     [Parameter]
     public string ArticleId { get; set; }
+
+    [CascadingParameter(Name = "TransactionDb")]
+    public LocalForageStore? ForageTransactionDb { get; set; }
+    
+    private List<(string, TransactionDTO)>? _transactions;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_transactions is null && ForageTransactionDb is not null)
+        {
+            await Load();
+        }
+    }
+
+    private async Task Load()
+    {
+        var keys = await ForageTransactionDb.Keys();
+        _transactions = new List<(string, TransactionDTO)>();
+
+        for (int i = 0; i < keys.Length; i++)
+        {
+            var transaction = await ForageTransactionDb.GetItem<TransactionDTO>(keys[i]);
+            if (transaction.ArticleId == ArticleId)
+            {
+                _transactions.Add((keys[i], transaction));
+                StateHasChanged();
+            }
+        }
+    }
 }
